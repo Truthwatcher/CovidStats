@@ -4,6 +4,9 @@
 Data:
 https://www.kaggle.com/ronitf/heart-disease-uci/data
 
+Data:
+https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series?fbclid=IwAR0cH8QXrAjDyfOkYrpSCz68ZO4b8Y7_kBTO7DMaq9DEKTYeZ1rnm1EVdyw
+
 
 # Tools:
 Visual Studio Code:
