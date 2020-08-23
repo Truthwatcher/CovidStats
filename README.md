@@ -37,3 +37,20 @@ python -m pip install --upgrade pip
 
 Data Processing:
 https://www.dataquest.io/blog/numpy-tutorial-python/
+
+How to use DataFrames in Pandas library:
+https://www.geeksforgeeks.org/python-pandas-dataframe/
+
+Pandas Tutorial
+https://pandas.pydata.org/docs/getting_started/index.html
+
+Library for Plotting:
+https://matplotlib.org/tutorials/introductory/pyplot.html
+
+
+# Sprint History
+
+2020-05-03
+Goal
+-implement basic data selection and graphing
+-
