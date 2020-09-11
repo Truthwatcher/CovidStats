@@ -2,29 +2,17 @@
 
 ###   Constants
 
-FILE_LOCATION = 'Data/heart.csv'
 DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
 
 ###   Imports
 
 import pandas
 import matplotlib.pyplot as plt
+import csv
 
 def acquireData(dataSource):
-    #data = pandas.read_csv(DATA_URL, index_col = "Country/Region")
     data = pandas.read_csv(DATA_URL)
     return data
-
-def parseData():
-    f = open(FILE_LOCATION, "r")
-    data = list(csv.reader(f, delimiter=';'))
-    return data
-
-    
-    #with open(FILE_LOCATION, 'r') as f:
-    #    print(f.read()) 
-    #    print ('Hi')
-
 
 def returnCountries(data):
     return data['Country/Region']
@@ -59,6 +47,7 @@ def executeCommand(command,data):
         print ("The currently implemented commands are:")
         print ("exit: exit the program")
         print ("plot <country>: plot the cases in a country up to a specifc date")
+        print ("countries: list all countries that are in the database")
     
     elif command[0] == 'exit':
         return False
@@ -70,9 +59,11 @@ def executeCommand(command,data):
 
         if command[1].capitalize() not in list(data['Country/Region']):
             print ("invalid argument for 'plot' command")
-
         else:
             plotCountry(command[1].capitalize(),data)
+
+    elif command[0] == 'countries':
+        print(returnCountries(data))
     
     elif command[0] == 'stats':
 
@@ -85,13 +76,13 @@ def executeCommand(command,data):
 
 
     else:
-        print ("ERROR: command not recognized")
+        print ("ERROR: command not recognized.")
+        print ("Type 'help' to get a list of commands")
 
 
 
 '''
 Prototyping block
-'''
 
 
 data = acquireData(DATA_URL)
@@ -103,8 +94,6 @@ test = printStats('Canada',data)
 test2 = test.transpose()
 test2.columns = list(test2.values[0])
 test3 = test2.drop(test2.index[0:3])
-
-
 '''
 
 def main():
@@ -120,7 +109,6 @@ def main():
         if executeCommand(command,covidData) == False:
             break
 
-
     return covidData
 
 
@@ -130,15 +118,10 @@ if __name__ == "__main__":
 
 #Useful notes:
 
-How to access a  list of countries in the dataset:
-    data['Country/Region']
+#How to access a  list of countries in the dataset:
+#    data['Country/Region']
 
-How to access a  list of countries in the dataset:
-    data['Country/Region']
+#Get all rows that have items of the specific name: data[data["Country/Region"]=="France"]
 
-Get all rows that have items of the specific name: data[data["Country/Region"]=="France"]
-
-Get all the headers of the columns:
-list(test.columns.values)
-
-'''
+#Get all the headers of the columns:
+#list(test.columns.values)
