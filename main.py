@@ -42,42 +42,43 @@ def printStats(country,data):
 def executeCommand(command,data):
     command = command.lower()
     command = command.split()
-    print(command)
-    if command[0] == 'help':
-        print ("The currently implemented commands are:")
-        print ("exit: exit the program")
-        print ("plot <country>: plot the cases in a country up to a specifc date")
-        print ("countries: list all countries that are in the database")
-    
-    elif command[0] == 'exit':
-        return False
+    if len(command) != 0:
+        print(command)
 
-    elif command[0] == 'list':
-        print (list(data.columns.values))
-    
-    elif command[0] == 'plot':
+        if command[0] == 'help':
+            print ("The currently implemented commands are:")
+            print ("exit: exit the program")
+            print ("plot <country>: plot the cases in a country up to a specifc date")
+            print ("countries: list all countries that are in the database")
+        
+        elif command[0] == 'exit':
+            return False
 
-        if command[1].capitalize() not in list(data['Country/Region']):
-            print ("invalid argument for 'plot' command")
+        elif command[0] == 'list':
+            print (list(data.columns.values))
+        
+        elif command[0] == 'plot':
+
+            if command[1].capitalize() not in list(data['Country/Region']):
+                print ("invalid argument for 'plot' command")
+            else:
+                plotCountry(command[1].capitalize(),data)
+
+        elif command[0] == 'countries':
+            print(returnCountries(data))
+        
+        elif command[0] == 'stats':
+
+            if command[1].capitalize() not in list(data['Country/Region']):
+                print ("invalid argument for 'stats' command")
+
+            else:
+                printStats(command[1].capitalize(),data)
         else:
-            plotCountry(command[1].capitalize(),data)
-
-    elif command[0] == 'countries':
-        print(returnCountries(data))
-    
-    elif command[0] == 'stats':
-
-        if command[1].capitalize() not in list(data['Country/Region']):
-            print ("invalid argument for 'stats' command")
-
-        else:
-            printStats(command[1].capitalize(),data)
-
-
-
+            print ("ERROR: command not recognized.")
+            print ("Type 'help' to get a list of commands")
     else:
-        print ("ERROR: command not recognized.")
-        print ("Type 'help' to get a list of commands")
+        print("No command was entered")
 
 
 
