@@ -9,6 +9,10 @@ DATA_URL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/css
 import pandas
 import matplotlib.pyplot as plt
 import csv
+import argparse
+
+###   Functions
+
 
 def acquireData(dataSource):
     data = pandas.read_csv(DATA_URL)
@@ -80,22 +84,7 @@ def executeCommand(command,data):
     else:
         print("No command was entered")
 
-
-
-'''
-Prototyping block
-
-
-data = acquireData(DATA_URL)
-
-test = printStats('Canada',data)
-
-
-#Get Transpose (To have statistics per Province)
-test2 = test.transpose()
-test2.columns = list(test2.values[0])
-test3 = test2.drop(test2.index[0:3])
-'''
+###     Main
 
 def main():
     """ Main program """
@@ -110,12 +99,15 @@ def main():
         if executeCommand(command,covidData) == False:
             break
 
-    return covidData
+    test = 1
+    return main
 
 #test commits:
 
-if __name__ == "__main__":
-    main()
+main()
+
+#if __name__ == "__main__":
+#   return main()
 
 #Useful notes:
 
