@@ -43,20 +43,28 @@ def printStats(country,data):
     return countryFrame
     
 
-def executeCommand(command,data):
-    command = command.lower()
-    command = command.split()
+def executeCommand(command,country,data):
+
+    if command == 'list':
+        print (list(data.columns.values))
+
+    else:
+        print("Command not recognixed. The available commands are:")
+        print("list: return a list of countries that are in the database")
+
+
+
+
+
+    '''
     if len(command) != 0:
         print(command)
 
         if command[0] == 'help':
             print ("The currently implemented commands are:")
-            print ("exit: exit the program")
             print ("plot <country>: plot the cases in a country up to a specifc date")
             print ("countries: list all countries that are in the database")
         
-        elif command[0] == 'exit':
-            return False
 
         elif command[0] == 'list':
             print (list(data.columns.values))
@@ -83,28 +91,35 @@ def executeCommand(command,data):
             print ("Type 'help' to get a list of commands")
     else:
         print("No command was entered")
-
+'''
 ###     Main
 
-def main():
+def main(args):
     """ Main program """
     # Code goes over here.
 
     covidData = acquireData(DATA_URL)
 
-    while(True):
+    executeCommand(args.command, args.country, covidData)
 
-        print('Please enter a command:')
-        command = input()
-        if executeCommand(command,covidData) == False:
-            break
-
-    test = 1
     return main
 
 #test commits:
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Tool for examining Covid statistics')
 
-main()
+    parser.add_argument(dest    = 'command',
+                        type    = str,
+                        help    = 'The command sent to the program')
+
+    parser.add_argument(dest    = '--country',
+                        type    = str,
+                        help    = 'the country that the specific command will work with',
+                        default = '')     
+
+    main(parser.parse_args())
+
+    
 
 #if __name__ == "__main__":
 #   return main()
