@@ -18,10 +18,7 @@ def acquireData(dataSource):
     data = pandas.read_csv(DATA_URL)
     return data
 
-def returnCountries(data):
-    return data['Country/Region']
-
-def plotCountry(country,data):
+def plotCountry(data,country,range):
 
     countryFrame = data[data["Country/Region"] == country]
 
@@ -29,11 +26,16 @@ def plotCountry(country,data):
     plotDataY = []
     
     #The first four columns in the dataframe are ['Province/State', 'Country/Region', 'Lat', 'Long']
-    for date in list(data.columns.values)[4:]:
-        plotDataX.append(date[:-3])
+    for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
+        plotDataX.append(date)
         plotDataY.append(sum(countryFrame[date]))
     
+    #fig, ax = plt.subplots()
+    #ax.plot(plotDataX,plotDataY)
+    #ax.xaxis_date()
+    #fig.autofmt_xdate()
     plt.plot(plotDataX,plotDataY)
+    plt.xticks(plotDataX[::30])
     plt.show()
 
 def printStats(country,data):
@@ -43,13 +45,19 @@ def printStats(country,data):
     return countryFrame
     
 
-def executeCommand(command,country,data):
+def executeCommand(data,command,country,range):
 
-    if command == 'list':
-        print (list(data.columns.values))
+    if command == 'list countries':
+        print(list(data["Country/Region"]))
+
+    elif command == 'plot':
+        if country.capitalize() not in list(data['Country/Region']):
+            print ("invalid argument for 'plot' command '" + country + "' is not a country")
+        else:
+            plotCountry(data,country,range)
 
     else:
-        print("Command not recognixed. The available commands are:")
+        print("Command not recognised. The available commands are:")
         print("list: return a list of countries that are in the database")
 
 
@@ -100,9 +108,24 @@ def main(args):
 
     covidData = acquireData(DATA_URL)
 
-    executeCommand(args.command, args.country, covidData)
+    print(args.command)
 
-    return main
+    ### Main Logic for executing commands:
+
+    if args.command == 'list countries':
+        print(list(covidData["Country/Region"]))
+
+    elif args.command == 'plot':
+        if args.country.capitalize() not in list(covidData['Country/Region']):
+            print ("invalid argument for 'plot' command '" + args.country + "' is not a country")
+        else:
+            plotCountry(covidData,args.country,range)
+
+    else:
+        print("Command not recognised. The available commands are:")
+        print("list: return a list of countries that are in the database")
+
+    return None
 
 #test commits:
 if __name__ == "__main__":
@@ -112,10 +135,15 @@ if __name__ == "__main__":
                         type    = str,
                         help    = 'The command sent to the program')
 
-    parser.add_argument(dest    = '--country',
+
+    parser.add_argument('--country',
                         type    = str,
-                        help    = 'the country that the specific command will work with',
-                        default = '')     
+                        help    = 'the country that the specific command will work with')
+
+    parser.add_argument('--range',
+                        type    = int,
+                        help    = 'The number of datapoints that you want to use. The operation will be done on the most recent day, and up to range number of days before the most recent day',
+                        default = 0)     
 
     main(parser.parse_args())
 

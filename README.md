@@ -1,4 +1,8 @@
-### Kaladin
+### covidstats
+
+## Installation
+in the covidstats directory run 'pip install -e .'
+
 
 -----
 Data:
@@ -33,6 +37,8 @@ Pip:
 Installed with:
 python -m pip install --upgrade pip
 
+Poetry
+
 # Useful Links
 
 Data Processing:
@@ -47,10 +53,3 @@ https://pandas.pydata.org/docs/getting_started/index.html
 Library for Plotting:
 https://matplotlib.org/tutorials/introductory/pyplot.html
 
-
-# Sprint History
-
-2020-05-03
-Goal
--implement basic data selection and graphing
--
