@@ -18,9 +18,18 @@ def acquireData(dataSource):
     data = pandas.read_csv(DATA_URL)
     return data
 
-def plotCountry(data,country,range):
+def plotCountry(data,country,province,range):
+    ##To do: implement plotting + checking province
 
     countryFrame = data[data["Country/Region"] == country]
+
+    #Check if a province was passed to the function
+    if province !="":
+        provinceFrame = countryFrame[countryFrame["Province/State"] == province]
+        plotFrame = provinceFrame
+    else:
+        plotFrame = countryFrame
+
 
     plotDataX = []
     plotDataY = []
@@ -28,7 +37,7 @@ def plotCountry(data,country,range):
     #The first four columns in the dataframe are ['Province/State', 'Country/Region', 'Lat', 'Long']
     for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
         plotDataX.append(date)
-        plotDataY.append(sum(countryFrame[date]))
+        plotDataY.append(sum(plotFrame[date]))
     
     #fig, ax = plt.subplots()
     #ax.plot(plotDataX,plotDataY)
@@ -45,23 +54,6 @@ def printStats(country,data):
     return countryFrame
     
 
-def executeCommand(data,command,country,range):
-
-    if command == 'list countries':
-        print(list(data["Country/Region"]))
-
-    elif command == 'plot':
-        if country.capitalize() not in list(data['Country/Region']):
-            print ("invalid argument for 'plot' command '" + country + "' is not a country")
-        else:
-            plotCountry(data,country,range)
-
-    else:
-        print("Command not recognised. The available commands are:")
-        print("list: return a list of countries that are in the database")
-
-
-
 
 
     '''
@@ -77,12 +69,6 @@ def executeCommand(data,command,country,range):
         elif command[0] == 'list':
             print (list(data.columns.values))
         
-        elif command[0] == 'plot':
-
-            if command[1].capitalize() not in list(data['Country/Region']):
-                print ("invalid argument for 'plot' command")
-            else:
-                plotCountry(command[1].capitalize(),data)
 
         elif command[0] == 'countries':
             print(returnCountries(data))
@@ -119,11 +105,17 @@ def main(args):
         if args.country.capitalize() not in list(covidData['Country/Region']):
             print ("invalid argument for 'plot' command '" + args.country + "' is not a country")
         else:
-            plotCountry(covidData,args.country,range)
+            if (args.province.capitalize() not in list(covidData['Province/State'])) or (args.province == ''):
+                print (args.province+ " is not a province/state in "+ args.country) 
+            else:
+                plotCountry(covidData,args.country,args.province,args.range)
 
     else:
         print("Command not recognised. The available commands are:")
         print("list: return a list of countries that are in the database")
+        print(" ")
+        print("plot <country> <province> <range>: plot the <range> most recent datapoints in the province in the specified country.")
+        print("If no <province> is specified, all <province> will be summed together and plotted.")
 
     return None
 
@@ -138,7 +130,13 @@ if __name__ == "__main__":
 
     parser.add_argument('--country',
                         type    = str,
-                        help    = 'the country that the specific command will work with')
+                        help    = 'the country that the specific command will work with',
+                        default= '')
+
+    parser.add_argument('--province',
+                        type    = str,
+                        help    = 'the province/state that the specific command will work with',
+                        default = '')
 
     parser.add_argument('--range',
                         type    = int,
