@@ -19,6 +19,9 @@ def acquireData(dataSource):
     data = pandas.read_csv(DATA_URL)
     return data
 
+def provincesInCountry(data,country):
+    return list((data[data["Country/Region"] == country])["Province/State"])
+
 def plotCountry(data,country,province,range):
     ##To do: implement plotting + checking province
 
@@ -31,24 +34,44 @@ def plotCountry(data,country,province,range):
     plt.plot(plotDataX,plotDataY)
 
     #Check if a province was passed to the function
-    if province !="":
+    if province == "all":
+        print('feature not implemented yet')
+    elif (province !="") :
         provinceFrame = countryFrame[countryFrame["Province/State"] == province]
         plotFrame = provinceFrame
-        plt.title("Number of total covid cases by Day in " +province+" "+ country)
+        plt.title("Number of total covid cases by Day in " + province + " " + country)
     else:
         plt.title("Number of total covid cases by Day in " + country)
         plotFrame = countryFrame
 
-
     
     #The first four columns in the dataframe are ['Province/State', 'Country/Region', 'Lat', 'Long']
-    for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
-        plotDataX.append(date)
-        plotDataY.append(sum(plotFrame[date]))
+    if province == "all":
+        for entry in provincesInCountry(data,country):
+                plotDataX =[]
+                plotDataY =[]
+                for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
+                    plotDataX.append(date)
+                    plotDataY.append(int(countryFrame[countryFrame['Province/State']==entry][date]))
 
-    plt.plot(plotDataX,plotDataY)
+                plt.plot(plotDataX,plotDataY,label = entry)
+                
+                #countryFrame[countryFrame['Province/State']==entry]
+            #plotdata = countryFrame[entry]
+        #iterate and plot all province/states in the country frame
+    elif province != '':
+        #sum all provinces/states 
+        print('')
+
+    else:
+        for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
+            plotDataX.append(date)
+            plotDataY.append(sum(plotFrame[date]))
+
+    #plt.plot(plotDataX,plotDataY)
    
     plt.xticks(plotDataX[::30])
+    plt.legend()
     plt.show()
 
 def printStats(country,data):
@@ -63,7 +86,7 @@ def main(args):
     """ Main program """
     # Code goes over here.
 
-    covidData = acquireData(DATA_URL)
+    covidData = pandas.read_csv(DATA_URL)
 
     print(args.command)
 
@@ -71,9 +94,12 @@ def main(args):
     if (args.country != '') and (args.country.capitalize() not in list(covidData['Country/Region'])):
         sys.exit("invalid --country argument "+ args.country + " is not a country/region in the dataset")
 
-    if (args.province != '') and (args.province.capitalize() not in list(covidData['Province/State'])):
+    if  (args.province != '' and args.province != 'all'):
+        if args.province not in list((covidData[covidData["Country/Region"] == args.country])["Province/State"]):
+            sys.exit(args.province + ' is not a valid province/state in ' + args.country)        
+
+    if (args.province != '' and args.province != 'all') and (args.province.capitalize() not in list(covidData['Province/State'])):
         sys.exit("invalid --province argument "+ args.province + " is not a province/state in the dataset")
-                
         
 
     ### Main Logic for executing commands:
@@ -105,7 +131,6 @@ if __name__ == "__main__":
                         type    = str,
                         help    = 'The command sent to the program')
 
-
     parser.add_argument('--country',
                         type    = str,
                         help    = 'the country that the specific command will work with',
@@ -113,7 +138,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--province',
                         type    = str,
-                        help    = 'the province/state that the specific command will work with',
+                        help    = 'the province/state that the specific command will work with. "all" will cause operations to be done on all province/state',
                         default = '')
 
     parser.add_argument('--range',
