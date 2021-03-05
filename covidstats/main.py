@@ -10,6 +10,7 @@ import pandas
 import matplotlib.pyplot as plt
 import csv
 import argparse
+import sys
 
 ###   Functions
 
@@ -23,27 +24,30 @@ def plotCountry(data,country,province,range):
 
     countryFrame = data[data["Country/Region"] == country]
 
+    plotDataX = []
+    plotDataY = []
+    
+    #initialize the plot so other operations can be done
+    plt.plot(plotDataX,plotDataY)
+
     #Check if a province was passed to the function
     if province !="":
         provinceFrame = countryFrame[countryFrame["Province/State"] == province]
         plotFrame = provinceFrame
+        plt.title("Number of total covid cases by Day in " +province+" "+ country)
     else:
+        plt.title("Number of total covid cases by Day in " + country)
         plotFrame = countryFrame
 
 
-    plotDataX = []
-    plotDataY = []
     
     #The first four columns in the dataframe are ['Province/State', 'Country/Region', 'Lat', 'Long']
     for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
         plotDataX.append(date)
         plotDataY.append(sum(plotFrame[date]))
-    
-    #fig, ax = plt.subplots()
-    #ax.plot(plotDataX,plotDataY)
-    #ax.xaxis_date()
-    #fig.autofmt_xdate()
+
     plt.plot(plotDataX,plotDataY)
+   
     plt.xticks(plotDataX[::30])
     plt.show()
 
@@ -53,39 +57,6 @@ def printStats(country,data):
 
     return countryFrame
     
-
-
-
-    '''
-    if len(command) != 0:
-        print(command)
-
-        if command[0] == 'help':
-            print ("The currently implemented commands are:")
-            print ("plot <country>: plot the cases in a country up to a specifc date")
-            print ("countries: list all countries that are in the database")
-        
-
-        elif command[0] == 'list':
-            print (list(data.columns.values))
-        
-
-        elif command[0] == 'countries':
-            print(returnCountries(data))
-        
-        elif command[0] == 'stats':
-
-            if command[1].capitalize() not in list(data['Country/Region']):
-                print ("invalid argument for 'stats' command")
-
-            else:
-                printStats(command[1].capitalize(),data)
-        else:
-            print ("ERROR: command not recognized.")
-            print ("Type 'help' to get a list of commands")
-    else:
-        print("No command was entered")
-'''
 ###     Main
 
 def main(args):
@@ -96,23 +67,30 @@ def main(args):
 
     print(args.command)
 
+    ### Validate arguments before doing further operation
+    if (args.country != '') and (args.country.capitalize() not in list(covidData['Country/Region'])):
+        sys.exit("invalid --country argument "+ args.country + " is not a country/region in the dataset")
+
+    if (args.province != '') and (args.province.capitalize() not in list(covidData['Province/State'])):
+        sys.exit("invalid --province argument "+ args.province + " is not a province/state in the dataset")
+                
+        
+
     ### Main Logic for executing commands:
 
     if args.command == 'list countries':
         print(list(covidData["Country/Region"]))
-
+    
+    elif args.command == 'list provinces':
+        print(list((covidData[covidData["Country/Region"] == args.country])["Province/State"]))
+        
     elif args.command == 'plot':
-        if args.country.capitalize() not in list(covidData['Country/Region']):
-            print ("invalid argument for 'plot' command '" + args.country + "' is not a country")
-        else:
-            if (args.province.capitalize() not in list(covidData['Province/State'])) or (args.province == ''):
-                print (args.province+ " is not a province/state in "+ args.country) 
-            else:
-                plotCountry(covidData,args.country,args.province,args.range)
+        plotCountry(covidData,args.country,args.province,args.range)
 
     else:
         print("Command not recognised. The available commands are:")
-        print("list: return a list of countries that are in the database")
+        print("list countries: return a list of countries that are in the database")
+        print("list provinces <country>: return a list of all provinces/states that are in the country")
         print(" ")
         print("plot <country> <province> <range>: plot the <range> most recent datapoints in the province in the specified country.")
         print("If no <province> is specified, all <province> will be summed together and plotted.")
