@@ -33,43 +33,50 @@ def plotCountry(data,country,province,range):
     #initialize the plot so other operations can be done
     plt.plot(plotDataX,plotDataY)
 
-    #Check if a province was passed to the function
-    if province == "all":
-        print('feature not implemented yet')
-    elif (province !="") :
-        provinceFrame = countryFrame[countryFrame["Province/State"] == province]
-        plotFrame = provinceFrame
-        plt.title("Number of total covid cases by Day in " + province + " " + country)
-    else:
-        plt.title("Number of total covid cases by Day in " + country)
-        plotFrame = countryFrame
-
     
     #The first four columns in the dataframe are ['Province/State', 'Country/Region', 'Lat', 'Long']
     if province == "all":
+        plotcount = 0
+        plt.title("Total Covid Cases by Data in " + country)
         for entry in provincesInCountry(data,country):
+                plotcount += 1
                 plotDataX =[]
                 plotDataY =[]
                 for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
                     plotDataX.append(date)
                     plotDataY.append(int(countryFrame[countryFrame['Province/State']==entry][date]))
 
-                plt.plot(plotDataX,plotDataY,label = entry)
-                
-                #countryFrame[countryFrame['Province/State']==entry]
-            #plotdata = countryFrame[entry]
-        #iterate and plot all province/states in the country frame
-    elif province != '':
-        #sum all provinces/states 
-        print('')
+                #To make sure that the lines representing the data on the plot are unique, different line styles are used 
+                if plotcount <=10:
+                    templinestyle = '-'
+                elif plotcount <=20:
+                    templinestyle = '--' 
+                elif plotcount <=30:
+                    templinestyle = ':'
+                elif plotcount <= 40:
+                    templinestyle = '-.'
 
-    else:
+                plt.plot(plotDataX,plotDataY,label = entry,linestyle = templinestyle)
+
+    elif province != '':
+        plt.title("Number of total covid cases by Day in " + province + " " + country)
+
         for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
             plotDataX.append(date)
-            plotDataY.append(sum(plotFrame[date]))
+            plotDataY.append(int(countryFrame[countryFrame['Province/State']==province][date]))
+        plt.plot(plotDataX,plotDataY,label = province)
+        #sum all provinces/states 
 
-    #plt.plot(plotDataX,plotDataY)
+    else:
+        plt.title("Number of total covid cases by Day in " + country)
+
+        for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
+            plotDataX.append(date)
+            plotDataY.append(sum(countryFrame[date]))
+        plt.plot(plotDataX,plotDataY,label = country)
+
    
+    #Do all operations that need to be done on all possible plots
     plt.xticks(plotDataX[::30])
     plt.legend()
     plt.show()
@@ -88,7 +95,15 @@ def main(args):
 
     covidData = pandas.read_csv(DATA_URL)
 
-    print(args.command)
+    #If the user chooses to exclude travellers, delete them from the data
+    if args.include_travellers == False:
+        #covidData = covidData[covidData.province/state ]
+
+        #I need to remove the entries when at a time. Trying to use an 'or' statement in the index causes an error
+        covidData = covidData[covidData['Province/State']!= 'Repatriated Travellers'] #or (countryFrame['Province/State']!= 'Diamond Princess') ] 
+        covidData = covidData[covidData['Province/State']!= 'Grand Princess']
+        covidData = covidData[covidData['Province/State']!= 'Diamond Princess']
+
 
     ### Validate arguments before doing further operation
     if (args.country != '') and (args.country.capitalize() not in list(covidData['Country/Region'])):
@@ -144,7 +159,12 @@ if __name__ == "__main__":
     parser.add_argument('--range',
                         type    = int,
                         help    = 'The number of datapoints that you want to use. The operation will be done on the most recent day, and up to range number of days before the most recent day',
-                        default = 0)     
+                        default = 0)  
+
+    parser.add_argument('--include_travellers',
+                        type = bool,
+                        help = 'Flag to either include repatriated travellers and cruise ships or exclude them from the database',
+                        default = False)
 
     main(parser.parse_args())
 
