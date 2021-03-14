@@ -34,11 +34,12 @@ def returnXYSelection(data,country,province ='',range = 0 , daily = False):
     xdata = []
     ydata = []
 
+    #Creating a subset of the dataframe to ensure their are no duplicate provinces
     countryFrame = data[data["Country/Region"] == country]
 
     for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
         xdata.append(date)
-        if province != '':
+        if province == '':
             ydata.append(sum(countryFrame[date]))
         else: 
             ydata.append(int(countryFrame[countryFrame['Province/State']==province][date]))
@@ -67,11 +68,13 @@ def plotCountry(data,country,province,range):
         plt.title("Total Covid Cases by Data in " + country)
         for entry in provincesInCountry(data,country):
                 plotcount += 1
-                plotDataX =[]
-                plotDataY =[]
-                for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
-                    plotDataX.append(date)
-                    plotDataY.append(int(countryFrame[countryFrame['Province/State']==entry][date]))
+
+                plotDataX, plotDataY = returnXYSelection(data,country,entry,range)
+                #plotDataX =[]
+                #plotDataY =[]
+                #for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
+                #    plotDataX.append(date)
+                #    plotDataY.append(int(countryFrame[countryFrame['Province/State']==entry][date]))
 
                 #To make sure that the lines representing the data on the plot are unique, different line styles are used 
                 if plotcount <=10:
