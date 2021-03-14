@@ -22,6 +22,33 @@ def acquireData(dataSource):
 def provincesInCountry(data,country):
     return list((data[data["Country/Region"] == country])["Province/State"])
 
+def returnXYSelection(data,country,province ='',range = 0 , daily = False):
+    #Function that returns list containing a selection of [X,Y] values from the dataframe
+    #
+    #
+    #Arguments:
+    #data: [pandas dataframe] The dataset that is being operated on. Expc
+    #country: [string] The country that the operation is done on. Expected to be a string
+    #province: [string] The province that the operation is done on. if no probince is supplied 
+    #daily: [boolean] Specify if the data should be
+    xdata = []
+    ydata = []
+
+    countryFrame = data[data["Country/Region"] == country]
+
+    for date in list(data.columns.values)[(4+(len(list(data.columns.values))-range)):]:
+        xdata.append(date)
+        if province != '':
+            ydata.append(sum(countryFrame[date]))
+        else: 
+            ydata.append(int(countryFrame[countryFrame['Province/State']==province][date]))
+
+    return xdata,ydata
+
+
+
+
+
 def plotCountry(data,country,province,range):
     ##To do: implement plotting + checking province
 
@@ -144,7 +171,7 @@ if __name__ == "__main__":
 
     parser.add_argument(dest    = 'command',
                         type    = str,
-                        help    = 'The command sent to the program')
+                        help    = 'The command sent to the program,')
 
     parser.add_argument('--country',
                         type    = str,
