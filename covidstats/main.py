@@ -22,7 +22,7 @@ def acquireData(dataSource):
 def provincesInCountry(data,country):
     return list((data[data["Country/Region"] == country])["Province/State"])
 
-def returnXYSelection(data,country,province ='',daterange = 0 , daily = False):
+def returnXYSelection(data,country,province ='',daterange = 0 , XYdaily = False):
     #Function that returns list containing a selection of [X,Y] values from the dataframe
     #
     #
@@ -34,15 +34,30 @@ def returnXYSelection(data,country,province ='',daterange = 0 , daily = False):
     xdata = []
     ydata = []
 
+    #placeholder saving the data from the previous day
+    yplaceholder = 0
+
+    if (daterange != 0) and (XYdaily == True):
+        daterange += 1
+
     #Creating a subset of the dataframe to ensure their are no duplicate provinces
     countryFrame = data[data["Country/Region"] == country]
 
     for date in list(data.columns.values)[(4+(len(list(data.columns.values))-daterange)):]:
         xdata.append(date)
         if province == '':
-            ydata.append(sum(countryFrame[date]))
+            ydata.append(sum(countryFrame[date])-yplaceholder)
+            if XYdaily == True:
+                yplaceholder = (sum(countryFrame[date]))
+            
         else: 
-            ydata.append(int(countryFrame[countryFrame['Province/State']==province][date]))
+            ydata.append(int(countryFrame[countryFrame['Province/State']==province][date]) - yplaceholder)
+            if XYdaily == True:
+                yplaceholder = int(countryFrame[countryFrame['Province/State']==province][date])
+
+    if (daterange != 0) and (XYdaily == True):
+        xdata.pop(0)
+        ydata.pop(0)
 
     return xdata,ydata
 
@@ -50,10 +65,8 @@ def returnXYSelection(data,country,province ='',daterange = 0 , daily = False):
 
 
 
-def plotCountry(data,country,province,plotrange):
+def plotCountry(data,country,province,plotrange,daily):
     ##To do: implement plotting + checking province
-
-    countryFrame = data[data["Country/Region"] == country]
 
     plotDataX = []
     plotDataY = []
@@ -69,7 +82,7 @@ def plotCountry(data,country,province,plotrange):
         for entry in provincesInCountry(data,country):
                 plotcount += 1
 
-                plotDataX, plotDataY = returnXYSelection(data,country,entry,plotrange)
+                plotDataX, plotDataY = returnXYSelection(data,country,entry,plotrange,daily)
 
                 #To make sure that the lines representing the data on the plot are unique, different line styles are used 
                 if plotcount <=10:
@@ -86,20 +99,13 @@ def plotCountry(data,country,province,plotrange):
     #plot only one province
     elif province != '':
         plt.title("Number of total covid cases by Day in " + province + " " + country)
-
-        plotDataX, plotDataY = returnXYSelection(data,country,province,plotrange)
-
+        plotDataX, plotDataY = returnXYSelection(data,country,province, plotrange,daily)
         plt.plot(plotDataX,plotDataY,label = province)
 
     #sum all provinces/states 
     else:
         plt.title("Number of total covid cases by Day in " + country)
-
-        plotDataX, plotDataY = returnXYSelection(data,country,daterange = plotrange)
-
-        #for date in list(data.columns.values)[(4+(len(list(data.columns.values))-daterange)):]:
-        #    plotDataX.append(date)
-        #    plotDataY.append(sum(countryFrame[date]))
+        plotDataX, plotDataY = returnXYSelection(data,country,daterange = plotrange,XYdaily = daily)
         plt.plot(plotDataX,plotDataY,label = country)
 
    
@@ -153,7 +159,7 @@ def main(args):
         print(list((covidData[covidData["Country/Region"] == args.country])["Province/State"]))
         
     elif args.command == 'plot':
-        plotCountry(covidData,args.country,args.province,args.range)
+        plotCountry(covidData,args.country,args.province,args.range,args.daily)
 
     else:
         print("Command not recognised. The available commands are:")
@@ -188,24 +194,17 @@ if __name__ == "__main__":
                         help    = 'The number of datapoints that you want to use. The operation will be done on the most recent day, and up to range number of days before the most recent day',
                         default = 0)  
 
+    parser.add_argument('--daily',
+                        type = bool,
+                        help = 'Flag to set if operations are done on all Covid cases [False] or new covid cases on each day [True]',
+                        default = False)
+
     parser.add_argument('--include_travellers',
                         type = bool,
                         help = 'Flag to either include repatriated travellers and cruise ships or exclude them from the database',
                         default = False)
 
+
+
     main(parser.parse_args())
 
-    
-
-#if __name__ == "__main__":
-#   return main()
-
-#Useful notes:
-
-#How to access a  list of countries in the dataset:
-#    data['Country/Region']
-
-#Get all rows that have items of the specific name: data[data["Country/Region"]=="France"]
-
-#Get all the headers of the columns:
-#list(test.columns.values)
