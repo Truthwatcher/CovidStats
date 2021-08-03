@@ -196,12 +196,12 @@ if __name__ == "__main__":
 
     parser.add_argument('--daily',
                         type = bool,
-                        help = 'Flag to set if operations are done on all Covid cases [False] or new covid cases on each day [True]',
+                        help = 'Flag to set if operations are done on cumulative covid cases to date [False] or new covid cases on each day [True]',
                         default = False)
 
     parser.add_argument('--include_travellers',
                         type = bool,
-                        help = 'Flag to either include repatriated travellers and cruise ships or exclude them from the database',
+                        help = 'Flag to either include repatriated travellers and cruise ships or exclude them from the dataset',
                         default = False)
 
 

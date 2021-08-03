@@ -1,4 +1,4 @@
-This Readme is intended to be used to keep track of lessons learned during development work
+This Readme is intended to be used to keep track of useful links/code snippets learned during development work
 
 ### Lessons Learned
 

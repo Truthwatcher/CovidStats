@@ -55,3 +55,8 @@ https://pandas.pydata.org/docs/getting_started/index.html
 Library for Plotting:
 https://matplotlib.org/tutorials/introductory/pyplot.html
 
+### Notes from Review 2021-03-16:
+- Use right terminology
+- could use pandas cumsum to make returnXYSelection look nicer
+- To reduce bloat on arguments that are getting passed around, could pass the 'args' around instead. Tradeoff is code reusability
+- Learn Linear Regression and Use it. libraries to use are either https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.stats.linregress.html or https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html?fbclid=IwAR1XeOhq_Js22DFbRhJZwpcpBnS_HZ4Nio-x70ddIAH3T0JGQm6uBTxIwwM
