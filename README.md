@@ -30,8 +30,6 @@ I do not claim any ownership of the data used by this project. All rights reserv
 Visual Studio Code:
 https://code.visualstudio.com/
 
-
-
 Pylint: 
 Installed with:
 python -m pip install -U pylint --user
@@ -42,9 +40,6 @@ https://git-scm.com/download/win
 Tortoise Git:
 https://tortoisegit.org/download/
 
-Pip: 
-Installed with:
-python -m pip install --upgrade pip
 -------
 
 # Useful Links:
@@ -60,6 +55,7 @@ https://pandas.pydata.org/docs/getting_started/index.html
 
 Library for Plotting:
 https://matplotlib.org/tutorials/introductory/pyplot.html
+
 -------
 ### Notes from peer Review 2021-03-16:
 - could use pandas cumsum to make returnXYSelection look nicer
