@@ -1,20 +1,10 @@
-# Everything in this file could probably be replaced by numpy or other functions
-# I've made this just to make sure I understand the math involved.
+#Functions related to calculating statistics.
+#Everything in this file was created as a learning exercise to make sure I understand the math involved.
+#If this project expanded beyond a self-teaching exercise, the contents of this file should be replaced with numpy function calls.
 
-sampledata = [1, 2, 3, 4, 5]
-
+###   Functions
 
 def standard_deviation(data):
-    """
-
-    Parameters
-    ----------
-    data
-
-    Returns
-    -------
-
-    """
     # input: list of numbers
     # Returns the population standard deviation of a list of numbers
     # Formula: https://www.k2analytics.co.in/wp-content/uploads/2020/05/standard-deviation.png
@@ -44,25 +34,9 @@ def zscore(data):
 
 
 def correlation_coeffecient(xdata: list(), ydata: list()) -> float:
-    """
-    Calculates the population correlation coefficient.
-    Based on this formula (which is another way of writing the Pearson Correlation coefficient:
-    https://www.khanacademy.org/math/ap-statistics/bivariate-data-ap/correlation-coefficient-r/v/calculating-correlation-coefficient-r
-
-    Parameters
-    ----------
-    xdata
-    ydata
-
-    Returns
-    -------
-
-    """
     # Returns the correlation coeffecient of the x and y data.
     # https://www.khanacademy.org/math/ap-statistics/bivariate-data-ap/correlation-coefficient-r/v/calculating-correlation-coefficient-r
-    # https://www.khanacademy.org/math/ap-statistics/bivariate-data-ap/correlation-coefficient-r/v/calculating-correlation-coefficient-r
-    #
-    #
+
 
     if len(xdata) != len(ydata):
         print("unequal number of x and y values. Sanitize your data inputs")
@@ -79,6 +53,7 @@ def correlation_coeffecient(xdata: list(), ydata: list()) -> float:
     return(result/len(xdata))
 
 if __name__ == "__main__":
+    #Sample correlation coefficient calculation
     samplexdata = [1,2,2,3]
     sampleydata = [1,2,3,6]
     print(correlation_coeffecient(samplexdata,sampleydata))

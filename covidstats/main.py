@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 ###   Constants
 
@@ -14,11 +13,6 @@ import sys
 
 ###   Functions
 
-def acquireData(dataSource):
-    data = pandas.read_csv(DATA_URL)
-    return data
-
-
 def provincesInCountry(data, country):
     return list((data[data["Country/Region"] == country])["Province/State"])
 
@@ -28,10 +22,11 @@ def returnXYSelection(data, country, province='', daterange=0, XYdaily=False):
     #
     #
     # Arguments:
-    # data: [pandas dataframe] The dataset that is being operated on. Expc
-    # country: [string] The country that the operation is done on. Expected to be a string
-    # province: [string] The province that the operation is done on. if no probince is supplied
-    # daily: [boolean] Specify if the data should be
+    # data: [pandas dataframe] The dataset that is being used.
+    # country: [string] The country that the operation is done on. Expected to be a string,
+    # province: [string] The province that the operation is done on. if no province is given, the selection returned will represent the entire country.
+    # daterange: [int] The number of days of data counting backwards from the present day that will be returned.
+    # XYdaily: [boolean] Specify if the data returned should be the marginal increase in covidcases day by day or cumulative cases up to the current day.
     xdata = []
     ydata = []
 
@@ -64,7 +59,15 @@ def returnXYSelection(data, country, province='', daterange=0, XYdaily=False):
 
 
 def plotCountry(data, country, province, plotrange, daily):
-    ##To do: implement plotting + checking province
+    # Plot a subset of data from the covid dataset.
+    #
+    #
+    # Arguments:
+    # data: [pandas dataframe] The dataset that is being used.
+    # country: [string] The country that will be plotted.
+    # province: [string] The province tha will be plotted, 'all' means all provinces will be ploted. '' will sum all provinces together.
+    # plotrange: [int]The number of days of data that will be plotted counting backwards from the present day.
+    # XYdaily: [boolean] Specify if the data returned should be the marginal increase in covidcases day by day or cumulative cases up to the current day.
 
     plotDataX = []
     plotDataY = []
@@ -111,11 +114,10 @@ def plotCountry(data, country, province, plotrange, daily):
     plt.show()
 
 
-def printStats(country, data):
+def returnCountryStats(country, data):
+    #Return the data for a specific country
     countryFrame = data[data["Country/Region"] == country]
-
     return countryFrame
-
 
 ###     Main
 
@@ -169,8 +171,6 @@ def main(args):
 
     return None
 
-
-# test commits:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Tool for examining Covid statistics')
 
